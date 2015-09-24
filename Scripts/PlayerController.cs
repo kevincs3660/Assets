@@ -11,6 +11,16 @@ public class PlayerController : MonoBehaviour {
 	private CharacterController2D _controller;
 	private WeaponScript[] _weapons;
 	private bool facingRight = true;
+	enum states
+	{
+		IDLE = 0,
+		FACING_RIGHT = 1,
+		FACING_LEFT = 2,
+		RUNNING = 3,
+		JUMPING = 4,
+		DASHING = 5
+
+	};
 	// Use this for initialization
 
 	void Awake()
@@ -44,6 +54,13 @@ public class PlayerController : MonoBehaviour {
 			velocity.x = speed;
 			facingRight = true;
 			//shotDirection = transform.right;
+		}
+
+		if (Input.GetKey(KeyCode.LeftShift) == true) {
+			if(inputX < 0)
+				velocity.x = -speed * 2;
+			else 
+				velocity.x = speed * 2;
 		}
 
 		if (Input.GetAxis ("Jump") > 0 && _controller.isGrounded) {
