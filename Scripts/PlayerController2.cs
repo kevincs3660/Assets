@@ -11,6 +11,7 @@ public class PlayerController2 : MonoBehaviour {
 	private CharacterController2D _controller;
 	private WeaponScript[] _weapons;
 	private bool facingRight = true;
+	private int meleeTimer = 50;
 	enum characterStates
 	{
 		IDLE = 0,
@@ -71,8 +72,12 @@ public class PlayerController2 : MonoBehaviour {
 			}
 
 			if (Input.GetKey (KeyCode.T) == true) {
-				if (_weapons[2] != null)
-					_weapons[2].Attack(false);
+				if (_weapons[2] != null && _weapons[3] != null)
+					if(facingRight)
+						_weapons[2].Attack(false);
+				else
+					_weapons[3].Attack(false);
+				state = characterStates.MELEE;
 			}
 
 
@@ -124,6 +129,15 @@ public class PlayerController2 : MonoBehaviour {
 				state = characterStates.JUMPING;
 				velocity.y = Mathf.Sqrt (2f * jumpHeight * -gravity);
 			}
+
+			if (Input.GetKey (KeyCode.T) == true) {
+				if (_weapons[2] != null && _weapons[3] != null)
+					if(facingRight)
+					_weapons[2].Attack(false);
+					else
+					_weapons[3].Attack(false);
+				state = characterStates.MELEE;
+			}
 			
 			if (shoot) {
 				if (_weapons [0] != null && _weapons [1] != null)
@@ -140,10 +154,13 @@ public class PlayerController2 : MonoBehaviour {
 				
 				//_weapons[0].Attack(false, shotDirection);
 			}
-			
+
+			if(state != characterStates.MELEE)
+			{
 			velocity.y += gravity * Time.deltaTime;
 			
 			_controller.move (velocity * Time.deltaTime);
+			}
 			break;
 		case characterStates.JUMPING:
 
@@ -188,6 +205,16 @@ public class PlayerController2 : MonoBehaviour {
 
 			if(_controller.isGrounded)
 				state = characterStates.IDLE; 
+
+			break;
+		case characterStates.MELEE:
+			meleeTimer--;
+
+			if(meleeTimer <= 0)
+			{
+				state = characterStates.IDLE;
+				meleeTimer = 50;
+			}
 
 			break;
 		}
