@@ -41,15 +41,15 @@ public class PlayerController2 : MonoBehaviour {
 
 		Vector3 velocity = _controller.velocity;
 		float inputX = Input.GetAxis ("Horizontal");
-		Vector2 shotDirection = Vector2.zero;
+		//Vector2 shotDirection = Vector2.zero;
 		bool shoot = Input.GetButtonDown ("Fire1");
 
 		//Debug.Log ("Axis is: " + inputX.ToString ());
-		Debug.Log ("State is : " + state);
+		//Debug.Log ("State is : " + state);
 		switch(state)
 		{
 		case characterStates.IDLE:
-			Debug.Log("IDLE");
+			//Debug.Log("IDLE");
 			velocity.x = 0;
 
 			if (inputX < 0) {
@@ -98,7 +98,7 @@ public class PlayerController2 : MonoBehaviour {
 				//_weapons[0].Attack(false, shotDirection);
 			}
 
-			Debug.Log("Moving player");
+			//Debug.Log("Moving player");
 			velocity.y += gravity * Time.deltaTime;
 
 			_controller.move (velocity * Time.deltaTime);
@@ -121,7 +121,7 @@ public class PlayerController2 : MonoBehaviour {
 			if (Input.GetKey (KeyCode.LeftShift) == true) {
 				if (inputX < 0)
 					velocity.x = -speed * 2;
-				else 
+				else if(inputX > 0)
 					velocity.x = speed * 2;
 			}
 			
@@ -137,6 +137,7 @@ public class PlayerController2 : MonoBehaviour {
 					else
 					_weapons[3].Attack(false);
 				state = characterStates.MELEE;
+				break;
 			}
 			
 			if (shoot) {
@@ -175,11 +176,16 @@ public class PlayerController2 : MonoBehaviour {
 				facingRight = true;
 				//shotDirection = transform.right;
 			}
+			else
+			{
+				//state = characterStates.IDLE;
+				//break;
+			}
 
 			if (Input.GetKey (KeyCode.LeftShift) == true) {
 				if (inputX < 0)
 					velocity.x = -speed * 2f;
-				else 
+				else if(inputX > 0)
 					velocity.x = speed * 2f;
 			}
 
@@ -217,6 +223,44 @@ public class PlayerController2 : MonoBehaviour {
 			}
 
 			break;
+		}
+		var dist = (transform.position - Camera.main.transform.position).z;
+		
+		var leftBorder = Camera.main.ViewportToWorldPoint(
+			new Vector3(0, 0, dist)
+			).x;
+		
+		var rightBorder = Camera.main.ViewportToWorldPoint(
+			new Vector3(1, 0, dist)
+			).x;
+		
+		transform.position = new Vector3(
+			Mathf.Clamp(transform.position.x, leftBorder, rightBorder),
+			transform.position.y,
+			transform.position.z
+			);
+	}
+
+	void OnCollisionEnter2D(Collision2D collision)
+	{
+		bool damagePlayer = false;
+		Debug.Log ("Player colliding!!!");
+		// Collision with enemy
+		MeleeEnemyScript enemy = collision.gameObject.GetComponent<MeleeEnemyScript>();
+		if (enemy != null)
+		{
+			// Kill the enemy
+			HealthScript enemyHealth = enemy.GetComponent<HealthScript>();
+			if (enemyHealth != null) enemyHealth.Damage(enemyHealth.hp);
+			
+			damagePlayer = true;
+		}
+		
+		// Damage the player
+		if (damagePlayer)
+		{
+			HealthScript playerHealth = this.GetComponent<HealthScript>();
+			if (playerHealth != null) playerHealth.Damage(1);
 		}
 	}
 }
