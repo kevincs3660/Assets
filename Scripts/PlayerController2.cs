@@ -12,6 +12,12 @@ public class PlayerController2 : MonoBehaviour {
 	private WeaponScript[] _weapons;
 	private bool facingRight = true;
 	private int meleeTimer = 50;
+	private int dashTime = 20;
+	private bool dashEnabled = true;
+	private float dashCounter;
+	private int dashCooldown = 50;
+	private int dashCooldownCounter;
+	private bool dashing;
 	enum characterStates
 	{
 		IDLE = 0,
@@ -28,6 +34,8 @@ public class PlayerController2 : MonoBehaviour {
 
 	void Awake()
 	{
+		dashCounter = dashTime;
+		dashCooldownCounter = dashCooldown;
 		state = characterStates.IDLE;
 		_weapons = GetComponentsInChildren<WeaponScript>();
 	}
@@ -50,6 +58,12 @@ public class PlayerController2 : MonoBehaviour {
 		{
 		case characterStates.IDLE:
 			//Debug.Log("IDLE");
+			if(dashEnabled == false)
+				dashCooldownCounter--;
+			else
+				if(dashCounter < dashTime)
+					dashCounter+= 0.5f;
+
 			velocity.x = 0;
 
 			if (inputX < 0) {
@@ -104,6 +118,22 @@ public class PlayerController2 : MonoBehaviour {
 			_controller.move (velocity * Time.deltaTime);
 			break;
 		case characterStates.RUNNING:
+
+			if(dashEnabled == false)
+				dashCooldownCounter--;
+			else
+				if(dashCounter < dashTime)
+					dashCounter+= 0.5f;
+
+			Debug.Log("Dashcounter: " + dashCounter);
+
+			if(dashCooldownCounter <= 0)
+			{
+				dashEnabled = true;
+				dashCooldownCounter = dashCooldown;
+				dashCounter = dashTime;
+			}
+
 				velocity.x = 0;
 			
 			if (inputX < 0) {
@@ -118,11 +148,22 @@ public class PlayerController2 : MonoBehaviour {
 			else
 				state = characterStates.IDLE;
 			
-			if (Input.GetKey (KeyCode.LeftShift) == true) {
+			if (Input.GetKey (KeyCode.LeftShift) == true && dashEnabled) {
 				if (inputX < 0)
+				{
 					velocity.x = -speed * 2;
+					dashCounter--;
+					if(dashCounter <= 0)
+						dashEnabled = false;
+				}
 				else if(inputX > 0)
+				{
 					velocity.x = speed * 2;
+					dashCounter--;
+					if(dashCounter <= 0)
+						dashEnabled = false;
+				}
+				Debug.Log("DashCounter: " + dashCounter);
 			}
 			
 			if (Input.GetAxis ("Jump") > 0 && _controller.isGrounded) {
@@ -165,6 +206,11 @@ public class PlayerController2 : MonoBehaviour {
 			break;
 		case characterStates.JUMPING:
 
+			if(dashEnabled == false)
+				dashCooldownCounter--;
+			else
+				if(dashCounter < dashTime)
+					dashCounter+= 0.5f;
 
 			// movement
 			if (inputX < 0) {
@@ -182,11 +228,21 @@ public class PlayerController2 : MonoBehaviour {
 				//break;
 			}
 
-			if (Input.GetKey (KeyCode.LeftShift) == true) {
+			if (Input.GetKey (KeyCode.LeftShift) == true && dashEnabled) {
 				if (inputX < 0)
-					velocity.x = -speed * 2f;
+				{
+					velocity.x = -speed * 2;
+					dashCounter--;
+					if(dashCounter <= 0)
+						dashEnabled = false;
+				}
 				else if(inputX > 0)
-					velocity.x = speed * 2f;
+				{
+					velocity.x = speed * 2;
+					dashCounter--;
+					if(dashCounter <= 0)
+						dashEnabled = false;
+				}
 			}
 
 			// shooting
@@ -214,6 +270,13 @@ public class PlayerController2 : MonoBehaviour {
 
 			break;
 		case characterStates.MELEE:
+
+			if(dashEnabled == false)
+				dashCooldownCounter--;
+			else
+				if(dashCounter < dashTime)
+					dashCounter+= 0.5f;
+
 			meleeTimer--;
 
 			if(meleeTimer <= 0)
@@ -244,7 +307,7 @@ public class PlayerController2 : MonoBehaviour {
 	void OnCollisionEnter2D(Collision2D collision)
 	{
 		bool damagePlayer = false;
-		Debug.Log ("Player colliding!!!");
+		//Debug.Log ("Player colliding!!!");
 		// Collision with enemy
 		MeleeEnemyScript enemy = collision.gameObject.GetComponent<MeleeEnemyScript>();
 		if (enemy != null)

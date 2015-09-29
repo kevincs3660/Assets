@@ -45,12 +45,27 @@ public class MeleeEnemyScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		if (hasSpawn == false)
+		{
+			if (GetComponent<Renderer>().IsVisibleFrom(Camera.main))
+			{
+				Spawn();
+			}
+		}
+		else
+		{
+			direction = (player1.transform.position - this.transform.position).normalized;
+			movement = new Vector2 (speed.x * direction.x, speed.y * direction.y);
+			movement *= Time.deltaTime;
+			
+			transform.Translate (movement);
+			// 4 - Out of the camera ? Destroy the game object.
+			if (GetComponent<Renderer>().IsVisibleFrom(Camera.main) == false)
+			{
+				Destroy(gameObject);
+			}
+		}
 
-		direction = (player1.transform.position - this.transform.position).normalized;
-		movement = new Vector2 (speed.x * direction.x, speed.y * direction.y);
-		movement *= Time.deltaTime;
-		
-		transform.Translate (movement);
 		
 	}
 
