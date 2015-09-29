@@ -125,7 +125,7 @@ public class PlayerController2 : MonoBehaviour {
 				if(dashCounter < dashTime)
 					dashCounter+= 0.5f;
 
-			Debug.Log("Dashcounter: " + dashCounter);
+			//Debug.Log("Dashcounter: " + dashCounter);
 
 			if(dashCooldownCounter <= 0)
 			{
@@ -163,7 +163,7 @@ public class PlayerController2 : MonoBehaviour {
 					if(dashCounter <= 0)
 						dashEnabled = false;
 				}
-				Debug.Log("DashCounter: " + dashCounter);
+				//Debug.Log("DashCounter: " + dashCounter);
 			}
 			
 			if (Input.GetAxis ("Jump") > 0 && _controller.isGrounded) {
@@ -325,5 +325,13 @@ public class PlayerController2 : MonoBehaviour {
 			HealthScript playerHealth = this.GetComponent<HealthScript>();
 			if (playerHealth != null) playerHealth.Damage(1);
 		}
+	}
+
+	void OnDestroy()
+	{
+		// Game Over.
+		// Add the script to the parent because the current game
+		// object is likely going to be destroyed immediately.
+		transform.parent.gameObject.AddComponent<GameOverScript>();
 	}
 }
