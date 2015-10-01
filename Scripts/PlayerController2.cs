@@ -50,7 +50,8 @@ public class PlayerController2 : MonoBehaviour {
 		Vector3 velocity = _controller.velocity;
 		float inputX = Input.GetAxis ("Horizontal");
 		//Vector2 shotDirection = Vector2.zero;
-		bool shoot = Input.GetButtonDown ("Fire1");
+		//bool shoot = Input.GetButtonDown ("Fire1");
+		bool shoot = Input.GetKey (KeyCode.RightArrow);
 
 		//Debug.Log ("Axis is: " + inputX.ToString ());
 		//Debug.Log ("State is : " + state);
@@ -85,7 +86,7 @@ public class PlayerController2 : MonoBehaviour {
 				velocity.y = Mathf.Sqrt (2f * jumpHeight * -gravity);
 			}
 
-			if (Input.GetKey (KeyCode.T) == true) {
+			if (Input.GetKey (KeyCode.DownArrow) == true) {
 				if (_weapons[2] != null && _weapons[3] != null)
 					if(facingRight)
 						_weapons[2].Attack(false);
@@ -171,7 +172,7 @@ public class PlayerController2 : MonoBehaviour {
 				velocity.y = Mathf.Sqrt (2f * jumpHeight * -gravity);
 			}
 
-			if (Input.GetKey (KeyCode.T) == true) {
+			if (Input.GetKey (KeyCode.DownArrow) == true) {
 				if (_weapons[2] != null && _weapons[3] != null)
 					if(facingRight)
 					_weapons[2].Attack(false);

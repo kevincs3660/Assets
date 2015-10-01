@@ -36,9 +36,7 @@ public class MeleeEnemyScript : MonoBehaviour {
 		//GameObject parent = player.transform.parent.gameObject.transform.position.x;
 		//player1 = (PlayerController2)GameObject.Find ("Player");
 		//player x = transform.Find("Player").GetComponent.
-		
 
-		Debug.Log (this.transform.position.x);
 		//Debug.Log ("Player X: " + playerx + " Player Y: " + playery);
 		//Debug.Log ("Transform parent x: " + player.transform.parent.gameObject.transform.position.x + " Tranform parent y: " + player.transform.parent.gameObject.transform.position.y);
 	}
@@ -54,7 +52,8 @@ public class MeleeEnemyScript : MonoBehaviour {
 		}
 		else
 		{
-			direction = (player1.transform.position - this.transform.position).normalized;
+			if(player1 != null)
+				direction = (player1.transform.position - this.transform.position).normalized;
 			movement = new Vector2 (speed.x * direction.x, speed.y * direction.y);
 			movement *= Time.deltaTime;
 			
